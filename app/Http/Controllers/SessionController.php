@@ -8,7 +8,7 @@ class SessionController extends Controller
 {
     public function index()
     {
-        return inertia('login');
+        return inertia('auth/login');
     }
 
     public function store()
@@ -27,13 +27,13 @@ class SessionController extends Controller
         request()->session()->regenerate();
 
         // redirect
-        return redirect('/');
+        return redirect('/home');
     }
 
     public function destroy()
     {
         auth()->logout();
 
-        return redirect('/login');
+        return redirect('/');
     }
 }

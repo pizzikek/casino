@@ -7,17 +7,13 @@ import {
     MenuItem,
     MenuItems,
 } from '@headlessui/react';
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { ReactNode } from 'react';
 
-const user = {
-    name: 'Tom Cook',
-    email: 'tom@example.com',
-    imageUrl:
-        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-};
+import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import type { ReactNode } from 'react';
+
+
 const navigation = [
-    { name: 'Dashboard', href: '#', current: true },
+    { name: 'Dashboard', href: '#', current: false },
     { name: 'Team', href: '#', current: false },
     { name: 'Projects', href: '#', current: false },
     { name: 'Calendar', href: '#', current: false },
@@ -25,7 +21,6 @@ const navigation = [
 ];
 const userNavigation = [
 
-    { name: 'Settings', href: '#' },
     { name: 'Sign out', href: '/logout' },
 ];
 
@@ -35,9 +30,18 @@ function classNames(...classes: (string | boolean | undefined | null)[]) {
 
 interface LayoutProps {
     children: ReactNode;
+    userProp: any,
+    header: string
 }
 
-export default function Layout({ children }: LayoutProps) {
+export default function Layout({ children, userProp, header}: LayoutProps) {
+    const user = {
+        name: userProp['userName'],
+        email: userProp['email'],
+        points: userProp['points'],
+        imageUrl: 'https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500'
+    };
+
     return (
         <>
             <div className="min-h-full">
@@ -78,19 +82,7 @@ export default function Layout({ children }: LayoutProps) {
                             </div>
                             <div className="hidden md:block">
                                 <div className="ml-4 flex items-center md:ml-6">
-                                    <button
-                                        type="button"
-                                        className="relative rounded-full p-1 text-gray-400 hover:text-white focus:outline-2 focus:outline-offset-2 focus:outline-indigo-500"
-                                    >
-                                        <span className="absolute -inset-1.5" />
-                                        <span className="sr-only">
-                                            View notifications
-                                        </span>
-                                        <BellIcon
-                                            aria-hidden="true"
-                                            className="size-6"
-                                        />
-                                    </button>
+                                    <div className="text-white">{user.points} points</div>
 
                                     {/* Profile dropdown */}
                                     <Menu as="div" className="relative ml-3">
@@ -215,7 +207,7 @@ export default function Layout({ children }: LayoutProps) {
                 <header className="relative bg-gray-800 after:pointer-events-none after:absolute after:inset-x-0 after:inset-y-0 after:border-y after:border-white/10">
                     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                         <h1 className="text-3xl font-bold tracking-tight text-white">
-                            Dashboard
+                            {header}
                         </h1>
                     </div>
                 </header>

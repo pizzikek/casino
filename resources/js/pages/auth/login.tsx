@@ -1,7 +1,7 @@
 import { Head, useForm } from '@inertiajs/react';
 
-import Button from '../components/forms/button'
-import InputLabel from '../components/forms/input-label'
+import Button from '@/components/forms/button'
+import InputLabel from '@/components/forms/input-label'
 
 
 export default function Example() {
@@ -21,7 +21,7 @@ export default function Example() {
         <>
             <Head title="Log In" />
             <div className="grid min-h-full place-content-center px-6 py-12 lg:px-8">
-                <div className="flex max-w-max flex-col rounded-3xl border-2 bg-gray-950 p-12">
+                <div className="flex w-[28rem] flex-col rounded-3xl border-2 bg-gray-950 p-12">
                     <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                         <img
                             alt="Your Company"
@@ -45,9 +45,11 @@ export default function Example() {
                                     setData('email', e.target.value)
                                 }
                             />
-                            {errors.email && (
-                                <div className="error">{errors.email}</div>
-                            )}
+                            <div className="text-red-600">
+                                {errors.email && (
+                                    <div className="error">{errors.email}</div>
+                                )}
+                            </div>
 
                             <InputLabel
                                 label="Password"
@@ -59,9 +61,13 @@ export default function Example() {
                                     setData('password', e.target.value)
                                 }
                             />
-                            {errors.password && (
-                                <div className="error">{errors.password}</div>
-                            )}
+                            <div className="text-red-600">
+                                {errors.password && (
+                                    <div className="error">
+                                        {errors.password}
+                                    </div>
+                                )}
+                            </div>
 
                             <Button label="Sign in" disabled={processing} />
                         </form>

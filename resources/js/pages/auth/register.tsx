@@ -1,7 +1,7 @@
 import { Head, useForm } from '@inertiajs/react';
 
-import Button from '../components/forms/button'
-import InputLabel from '../components/forms/input-label'
+import Button from '@/components/forms/button'
+import InputLabel from '@/components/forms/input-label'
 
 
 export default function Example() {
@@ -24,7 +24,7 @@ export default function Example() {
         <>
             <Head title="Log In" />
             <div className="grid min-h-full place-content-center px-6 py-12 lg:px-8">
-                <div className="flex max-w-max flex-col rounded-3xl border-2 bg-gray-950 p-12">
+                <div className="flex w-[29rem] flex-col rounded-3xl border-2 bg-gray-950 p-12">
                     <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                         <img
                             alt="Your Company"
@@ -48,9 +48,13 @@ export default function Example() {
                                     setData('username', e.target.value)
                                 }
                             />
-                            {errors.username && (
-                                <div className="error">{errors.username}</div>
-                            )}
+                            <div className="text-red-600">
+                                {errors.username && (
+                                    <div className="error">
+                                        {errors.username}
+                                    </div>
+                                )}
+                            </div>
                             <InputLabel
                                 label="Email Address"
                                 name="email"
@@ -61,9 +65,11 @@ export default function Example() {
                                     setData('email', e.target.value)
                                 }
                             />
-                            {errors.email && (
-                                <div className="error">{errors.email}</div>
-                            )}
+                            <div className="text-red-600">
+                                {errors.email && (
+                                    <div className="error">{errors.email}</div>
+                                )}
+                            </div>
 
                             <InputLabel
                                 label="Password"
@@ -75,9 +81,13 @@ export default function Example() {
                                     setData('password', e.target.value)
                                 }
                             />
-                            {errors.password && (
-                                <div className="error">{errors.password}</div>
-                            )}
+                            <div className="text-red-600">
+                                {errors.password && (
+                                    <div className="error">
+                                        {errors.password}
+                                    </div>
+                                )}
+                            </div>
                             <InputLabel
                                 label="Password Confirmation"
                                 name="password_confirmation"
@@ -91,20 +101,24 @@ export default function Example() {
                                     )
                                 }
                             />
-                            {errors.password_confirmation && (
-                                <div className="error">{errors.password_confirmation}</div>
-                            )}
+                            <div className="text-red-600">
+                                {errors.password_confirmation && (
+                                    <div className="error">
+                                        {errors.password_confirmation}
+                                    </div>
+                                )}
+                            </div>
 
                             <Button label="Sign in" disabled={processing} />
                         </form>
 
                         <p className="mt-10 text-center text-sm/6 text-gray-400">
-                            Dont have an Account?{' '}
+                            Have an Account?{' '}
                             <a
-                                href="/register"
+                                href="/login"
                                 className="font-semibold text-indigo-400 hover:text-indigo-300"
                             >
-                                Sign up
+                                Log in
                             </a>
                         </p>
                     </div>
