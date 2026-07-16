@@ -11,18 +11,11 @@ import {
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import type { ReactNode } from 'react';
 
+import { usePage } from '@inertiajs/react'
 
-const navigation = [
-    { name: 'Dashboard', href: '#', current: false },
-    { name: 'Team', href: '#', current: false },
-    { name: 'Projects', href: '#', current: false },
-    { name: 'Calendar', href: '#', current: false },
-    { name: 'Reports', href: '#', current: false },
-];
-const userNavigation = [
 
-    { name: 'Sign out', href: '/logout' },
-];
+
+const userNavigation = [{ name: 'Sign out', href: '/logout' }];
 
 function classNames(...classes: (string | boolean | undefined | null)[]) {
     return classes.filter(Boolean).join(' ');
@@ -35,6 +28,13 @@ interface LayoutProps {
 }
 
 export default function Layout({ children, userProp, header}: LayoutProps) {
+    const { url } = usePage();
+
+    const navigation = [
+        { name: 'Home', href: '/home', current: url == '/home' },
+        { name: 'Coin Flip', href: '/coin', current: url == '/coin'}
+    ];
+
     const user = {
         name: userProp['userName'],
         email: userProp['email'],

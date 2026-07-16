@@ -40,4 +40,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function coinTables()
+    {
+        return $this->belongsToMany(CoinTable::class, 'user_coin_table_pivot');
+    }
 }
