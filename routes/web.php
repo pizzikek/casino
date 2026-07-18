@@ -5,6 +5,7 @@ use App\Http\Controllers\GameController;
 use App\Http\Controllers\GameEntryPageController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\SessionController;
+use App\Http\Middleware\inGame;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'welcome')->name('home');
@@ -23,4 +24,8 @@ Route::get('/home', [PageController::class, 'index'])->name('home')->middleware(
 
 Route::get('/coin', [GameEntryPageController::class, 'coin_show'])->name('coin')->middleware('auth');
 Route::post('/coin', [GameEntryPageController::class, 'coin_store'])->name('coin')->middleware('auth');
-Route::get('/games/coin', [GameController::class, 'coin'])->name('coin')->middleware('auth');
+Route::get('/games/coin', [GameController::class, 'coin'])->name('coin')->middleware('auth')->middleware(inGame::class);
+Route::post('/games/coin/num', [GameController::class, 'bet_num'])->name('coin')->middleware('auth')->middleware(inGame::class);
+Route::post('/games/coin/face', [GameController::class, 'bet_face'])->name('coin')->middleware('auth')->middleware(inGame::class);
+
+Route::get('/games/leave', [GameController::class, 'leave'])->name('leave')->middleware('auth');

@@ -10,7 +10,7 @@ function Coin(user:any) {
     });
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('#');
+        post('/coin');
     };
 
     return (
@@ -34,9 +34,9 @@ function Coin(user:any) {
                         </div>
 
                         <div className="text-white/80 mt-6">
-                            DO NOT leave the table by closing the tab,<br/>
-                            ALWAYS use the leave button <br/>
-                            ELSE you loose the taken in points
+                            <span className="text-red-600/80">DO NOT</span> leave the table by closing the tab,<br/>
+                            <span className="text-red-600/80">ALWAYS</span> use the leave button <br/>
+                            <span className="text-red-600/80">ELSE you loose the taken in points</span>
                         </div>
 
 

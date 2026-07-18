@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->integer('points')->default(0);
             $table->integer('points_curr_table')->nullable();
+            $table->string('action_table')->nullable();
+            $table->integer('curr_bet')->nullable();
+            $table->boolean('in_table')->default(false);
             $table->string('username');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
