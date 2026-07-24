@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('coin_tables', function (Blueprint $table) {
             $table->id();
             $table->integer('bank_money')->default(0);
-            $table->string('status')->default('pending');
-            $table->enum('coin_side', ['number', 'face'])->default('number');
+            $table->string('status')->default('pending'); // currently unused
+            $table->enum('coin_side', ['num', 'face'])->default('num');
             $table->timestamps();
         });
     }

@@ -28,4 +28,4 @@ Route::get('/games/coin', [GameController::class, 'coin'])->name('coin')->middle
 Route::post('/games/coin/num', [GameController::class, 'bet_num'])->name('coin')->middleware('auth')->middleware(inGame::class);
 Route::post('/games/coin/face', [GameController::class, 'bet_face'])->name('coin')->middleware('auth')->middleware(inGame::class);
 
-Route::get('/games/leave', [GameController::class, 'leave'])->name('leave')->middleware('auth');
+Route::post('/games/leave', [GameController::class, 'leave'])->name('leave')->middleware('auth');

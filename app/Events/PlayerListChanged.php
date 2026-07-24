@@ -9,19 +9,32 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class UserPlacedBet implements ShouldBroadcast
+class PlayerListChanged implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public function __construct(public string $message) {}
+    /**
+     * Create a new event instance.
+     */
+    public function __construct(public $playerList)
+    {
+        //
+    }
 
+    /**
+     * Get the channels the event should broadcast on.
+     *
+     * @return array<int, Channel>
+     */
     public function broadcastOn(): array
     {
-        return [new PrivateChannel('coin')];
+        return [
+            new PrivateChannel('coin'),
+        ];
     }
 
     public function broadcastAs(): string
     {
-        return 'user_placed_bet';
+        return 'player-list-changed';
     }
 }

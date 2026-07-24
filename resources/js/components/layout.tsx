@@ -82,7 +82,9 @@ export default function Layout({ children, userProp, header}: LayoutProps) {
                             </div>
                             <div className="hidden md:block">
                                 <div className="ml-4 flex items-center md:ml-6">
-                                    <div className="text-white">{user.points} points</div>
+                                    <div className="text-white">
+                                        {user.points} points
+                                    </div>
 
                                     {/* Profile dropdown */}
                                     <Menu as="div" className="relative ml-3">
@@ -117,6 +119,9 @@ export default function Layout({ children, userProp, header}: LayoutProps) {
                                 </div>
                             </div>
                             <div className="-mr-2 flex md:hidden">
+                                <div className="text-white m-auto">
+                                    {user.points} points
+                                </div>
                                 {/* Mobile menu button */}
                                 <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-white/5 hover:text-white focus:outline-2 focus:outline-offset-2 focus:outline-indigo-500">
                                     <span className="absolute -inset-0.5" />

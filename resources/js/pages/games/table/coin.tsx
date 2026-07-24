@@ -1,35 +1,116 @@
 import { useForm } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
-import { useState } from 'react';
+import React, { useState } from 'react';
+// import squashed_face from '../../../../images/coin_Face-squashed.png';
+import coin_face from '../../../../images/coin_Face.png'
+// import squashed_number from '../../../../images/coin_Number-squashed.png'
 import coin_number from '../../../../images/coin_Number.png'
 
-function Coin({ list_players, user }: any) {
-    console.log(list_players)
-    const [ players, setPlayers] = useState(list_players)
 
-    const { data, setData, processing, post, errors } = useForm({
-        bet: '',
+function LeaveBTN(){
+
+    const { processing, post, errors } = useForm()
+    const leave = (e: React.FormEvent) => {
+        e.preventDefault()
+        post('/games/leave')
+
+        if (errors) {
+            console.log(errors)
+        }
+    }
+
+    return (
+        <form className="m-6" onSubmit={leave}>
+                <button disabled={processing} type="submit" className="flex w-full justify-center rounded-md bg-red-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-red-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
+                    Leave
+                </button>
+        </form>
+    )
+}
+function Coin({ list_players, user_id, start_face }: any) {
+    const [user, setUser] = useState(
+        list_players.filter((player: { id: number }) => player.id == user_id)[0]
+    )
+
+    const [players, setPlayers] = useState(
+        list_players.filter((player: { id: number }) => player.id !== user_id)
+    );
+
+
+    switch (start_face){
+        case 'face':
+            start_face = coin_face
+            break
+
+        case 'num':
+            start_face = coin_number
+            break
+    }
+
+    const [img, setImg] = useState(start_face)
+
+
+    const { data: { bet }, setData, processing, post, errors } = useForm({
+        bet: 0,
     });
+
+
 
     const betNumber = (e: any) => {
         e.preventDefault();
+        setUser({
+            ...user,
+            curr_bet: bet,
+            points_curr_table: user.points_curr_table - bet
+        })
         post('/games/coin/num');
+        setData('bet', 0)
     };
 
     const betFace = (e: any) => {
         e.preventDefault();
+        setUser({
+            ...user,
+            curr_bet: bet,
+            points_curr_table: user.points_curr_table - bet
+        })
         post('/games/coin/face');
+        setData('bet', 0);
     };
 
-    useEcho('coin', ['.user-left', '.user-joined'], (e) => {
-        console.log(e)
 
+
+    useEcho('coin', '.player-list-changed', (e) => {
+        setUser(
+           e.playerList.filter(
+                (player: { id: number }) => player.id == user_id,
+            )[0],
+        );
+        setPlayers(
+            e.playerList.filter((player: { id: number }) => player.id !== user_id),
+        );
     });
+
+    useEcho('coin', '.coin-flipped', (e) => {
+
+        if (e.face == 'face') {
+            setImg(coin_face)
+        }
+
+        if (e.face == 'num') {
+            setImg(coin_number);
+        }
+
+
+
+    })
+
+
 
     return (
         <div className="grid h-screen w-screen text-white/60">
             <div className="absolute self-center justify-self-center">
-                <img src={coin_number} alt="" className="max-h-120" />
+                <img src={img} alt="" className="max-h-120" />
             </div>
 
             <div className="absolute mb-40 flex w-2/5 justify-around gap-2 self-end justify-self-start">
@@ -74,9 +155,9 @@ function Coin({ list_players, user }: any) {
                                 <input
                                     type="number"
                                     placeholder="Bet:"
-                                    value={data.bet}
+                                    value={bet}
                                     onChange={(e) =>
-                                        setData('bet', e.target.value)
+                                        setData('bet', parseInt(e.target.value))
                                     }
                                 />
                                 <div className="text-red-600">
@@ -99,22 +180,19 @@ function Coin({ list_players, user }: any) {
                     </div>
 
                     <div
-                        className="m-3 flex justify-around"
+                        className="m-3 flex flex-col items-center space-y-1"
                         hidden={!user.curr_bet}
                     >
-                        <div>Wait until throw</div>
+                        <div>
+                            placed: <strong>{user.curr_bet}</strong> on: <strong>{user.action_table}</strong>
+                        </div>
+                        <div className="font-bold">Wait until throw</div>
                     </div>
                 </div>
             </div>
 
             <div className="absolute self-end justify-self-end">
-                <div className="m-6">
-                    <a href="/games/leave">
-                        <button className="flex w-full justify-center rounded-md bg-red-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-red-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
-                            Leave
-                        </button>
-                    </a>
-                </div>
+                <LeaveBTN />
             </div>
         </div>
     );

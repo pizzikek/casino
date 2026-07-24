@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -10,14 +9,14 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class UserJoined implements ShouldBroadcast
+class CoinFlipped implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(public User $user)
+    public function __construct(public $face, public $playerList)
     {
         //
     }
@@ -33,8 +32,22 @@ class UserJoined implements ShouldBroadcast
             new PrivateChannel('coin'),
         ];
     }
+
     public function broadcastAs(): string
     {
-        return 'user-joined';
+        return 'coin-flipped';
+    }
+
+    public function broadcastWith(): array
+    {
+        return [
+            'face' => $this->face,
+            'playerList' => $this->playerList->values()->map(fn ($u) => [
+                'id' => $u->id,
+                'username' => $u->username,
+                'points_curr_table' => $u->points_curr_table,
+                'curr_bet' => $u->curr_bet,
+            ])->all(),
+        ];
     }
 }

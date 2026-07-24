@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\UserJoined;
+use App\Events\PlayerListChanged;
 use App\Models\CoinTable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -42,7 +42,8 @@ class GameEntryPageController extends Controller
         $table->users()->attach($user);
 
         // Redirect
-        event(new UserJoined($user));
+        event(new PlayerListChanged($request->user()->coinTables()->firstOrFail()->users()/*->where('users.id', '!=', $request->user()->id)*/->get()));
+
         return redirect('/games/coin');
     }
 }
