@@ -1,70 +1,79 @@
 import { useForm } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
 import React, { useState } from 'react';
-// import squashed_face from '../../../../images/coin_Face-squashed.png';
-import coin_face from '../../../../images/coin_Face.png'
-// import squashed_number from '../../../../images/coin_Number-squashed.png'
-import coin_number from '../../../../images/coin_Number.png'
+import squashed_face_flipped from '../../../../images/coin_Face-squashed-flipped.png';
+import squashed_face from '../../../../images/coin_Face-squashed.png';
+import coin_face from '../../../../images/coin_Face.png';
+import squashed_number_flipped from '../../../../images/coin_Number-squashed-flipped.png';
+import squashed_number from '../../../../images/coin_Number-squashed.png';
+import coin_number from '../../../../images/coin_Number.png';
 
-
-function LeaveBTN(){
-
-    const { processing, post, errors } = useForm()
+function LeaveBTN() {
+    const { processing, post, errors } = useForm();
     const leave = (e: React.FormEvent) => {
-        e.preventDefault()
-        post('/games/leave')
+        e.preventDefault();
+        post('/games/leave');
 
         if (errors) {
-            console.log(errors)
+            console.log(errors);
         }
-    }
+    };
 
     return (
         <form className="m-6" onSubmit={leave}>
-                <button disabled={processing} type="submit" className="flex w-full justify-center rounded-md bg-red-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-red-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
-                    Leave
-                </button>
+            <button
+                disabled={processing}
+                type="submit"
+                className="flex w-full justify-center rounded-md bg-red-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-red-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+            >
+                Leave
+            </button>
         </form>
-    )
+    );
 }
 function Coin({ list_players, user_id, start_face }: any) {
     const [user, setUser] = useState(
-        list_players.filter((player: { id: number }) => player.id == user_id)[0]
-    )
-
-    const [players, setPlayers] = useState(
-        list_players.filter((player: { id: number }) => player.id !== user_id)
+        list_players.filter(
+            (player: { id: number }) => player.id == user_id,
+        )[0],
     );
 
+    const [players, setPlayers] = useState(
+        list_players.filter((player: { id: number }) => player.id !== user_id),
+    );
 
-    switch (start_face){
+    switch (start_face) {
         case 'face':
-            start_face = coin_face
-            break
+            start_face = coin_face;
+            break;
 
         case 'num':
-            start_face = coin_number
-            break
+            start_face = coin_number;
+            break;
     }
 
-    const [img, setImg] = useState(start_face)
+    const [img, setImg] = useState(start_face);
 
-
-    const { data: { bet }, setData, processing, post, errors } = useForm({
+    const {
+        data: { bet },
+        setData,
+        processing,
+        post,
+        errors,
+    } = useForm({
         bet: 0,
     });
-
-
 
     const betNumber = (e: any) => {
         e.preventDefault();
         setUser({
             ...user,
             curr_bet: bet,
-            points_curr_table: user.points_curr_table - bet
-        })
+            points_curr_table: user.points_curr_table - bet,
+            action_table: 'num'
+        });
         post('/games/coin/num');
-        setData('bet', 0)
+        setData('bet', 0);
     };
 
     const betFace = (e: any) => {
@@ -72,44 +81,72 @@ function Coin({ list_players, user_id, start_face }: any) {
         setUser({
             ...user,
             curr_bet: bet,
-            points_curr_table: user.points_curr_table - bet
-        })
+            points_curr_table: user.points_curr_table - bet,
+            action_table: 'face'
+        });
         post('/games/coin/face');
         setData('bet', 0);
     };
 
-
-
     useEcho('coin', '.player-list-changed', (e) => {
         setUser(
-           e.playerList.filter(
+            e.playerList.filter(
                 (player: { id: number }) => player.id == user_id,
             )[0],
         );
         setPlayers(
-            e.playerList.filter((player: { id: number }) => player.id !== user_id),
+            e.playerList.filter(
+                (player: { id: number }) => player.id !== user_id,
+            ),
         );
     });
 
     useEcho('coin', '.coin-flipped', (e) => {
-
-        if (e.face == 'face') {
-            setImg(coin_face)
+        console.log(e)
+        function Sleep(milliseconds: number) {
+            return new Promise((resolve) => setTimeout(resolve, milliseconds));
         }
+        async function flip() {
+            for (let i = 0; i < e.time; i++) {
+                setImg(coin_face);
+                await Sleep(100);
+                setImg(squashed_face);
+                await Sleep(100);
+                setImg(squashed_number_flipped);
+                await Sleep(100);
+                setImg(coin_number);
+                await Sleep(100);
+                setImg(squashed_number);
+                await Sleep(100);
+                setImg(squashed_face_flipped);
+                await Sleep(100);
+            }
 
-        if (e.face == 'num') {
-            setImg(coin_number);
+            if (e.face == 'face') {
+                setImg(coin_face);
+            }
+
+            if (e.face == 'num') {
+                setImg(coin_number);
+            }
         }
-
-
-
-    })
-
-
+        flip().then(() => {
+            setUser(
+                e.playerList.filter(
+                    (player: { id: number }) => player.id == user_id,
+                )[0],
+            );
+            setPlayers(
+                e.playerList.filter(
+                    (player: { id: number }) => player.id !== user_id,
+                ),
+            );
+        });
+    });
 
     return (
         <div className="grid h-screen w-screen text-white/60">
-            <div className="absolute self-center justify-self-center">
+            <div className="absolute flex self-center justify-self-center">
                 <img src={img} alt="" className="max-h-120" />
             </div>
 
@@ -184,7 +221,8 @@ function Coin({ list_players, user_id, start_face }: any) {
                         hidden={!user.curr_bet}
                     >
                         <div>
-                            placed: <strong>{user.curr_bet}</strong> on: <strong>{user.action_table}</strong>
+                            placed: <strong>{user.curr_bet}</strong> on:{' '}
+                            <strong>{user.action_table}</strong>
                         </div>
                         <div className="font-bold">Wait until throw</div>
                     </div>
@@ -197,4 +235,4 @@ function Coin({ list_players, user_id, start_face }: any) {
         </div>
     );
 }
-export default Coin
+export default Coin;

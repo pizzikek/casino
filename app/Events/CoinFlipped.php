@@ -16,7 +16,7 @@ class CoinFlipped implements ShouldBroadcast
     /**
      * Create a new event instance.
      */
-    public function __construct(public $face, public $playerList)
+    public function __construct(public $face, public $playerList, public $time)
     {
         //
     }
@@ -42,6 +42,7 @@ class CoinFlipped implements ShouldBroadcast
     {
         return [
             'face' => $this->face,
+            'time' => $this->time,
             'playerList' => $this->playerList->values()->map(fn ($u) => [
                 'id' => $u->id,
                 'username' => $u->username,

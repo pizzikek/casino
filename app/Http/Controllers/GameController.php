@@ -79,12 +79,13 @@ class GameController extends Controller
         $user->save();
 
         $users = $request->user()->coinTables()->firstOrFail()->users()/* ->where('users.id', '!=', $request->user()->id) */ ->get();
-        event(new PlayerListChanged($users));
 
         if (array_all($users->toArray(), function (mixed $value): bool {
             return $value['action_table'] != null;
         })) {
             $this->flip_coin($request->user()->coinTables()->firstOrFail());
+        } else {
+            event(new PlayerListChanged($users));
         }
     }
 
@@ -106,7 +107,9 @@ class GameController extends Controller
         }
         $table->save();
 
-        event(new CoinFlipped($face, $table->users));
+        $time = mt_rand(3, 7);
+
+        event(new CoinFlipped($face, $table->users, $time));
 
     }
 }
