@@ -8,6 +8,30 @@ import squashed_number_flipped from '../../../../images/coin_Number-squashed-fli
 import squashed_number from '../../../../images/coin_Number-squashed.png';
 import coin_number from '../../../../images/coin_Number.png';
 
+interface Player_vals{
+    id: number,
+    username: string,
+    points_curr_table: number,
+    curr_bet: number,
+    action_table: string
+}
+
+interface BE_vals{
+    list_players: Player_vals[],
+    user_id: number,
+    start_face: string
+}
+interface bet_vals{
+    playersList: Player_vals[],
+    preventDefault: Function
+}
+interface coin_throw_vals{
+    face: string,
+    playerList: Player_vals[],
+    time: number
+
+}
+
 function LeaveBTN() {
     const { processing, post, errors } = useForm();
     const leave = (e: React.FormEvent) => {
@@ -31,7 +55,7 @@ function LeaveBTN() {
         </form>
     );
 }
-function Coin({ list_players, user_id, start_face }: any) {
+function Coin({ list_players, user_id, start_face }: BE_vals) {
     const [user, setUser] = useState(
         list_players.filter(
             (player: { id: number }) => player.id == user_id,
@@ -60,12 +84,14 @@ function Coin({ list_players, user_id, start_face }: any) {
         processing,
         post,
         errors,
+        setError
     } = useForm({
         bet: 0,
     });
 
-    const betNumber = (e: any) => {
-        e.preventDefault();
+    const betNumber = (event: { preventDefault: () => void; }) => {
+        event.preventDefault();
+
         setUser({
             ...user,
             curr_bet: bet,
@@ -76,8 +102,12 @@ function Coin({ list_players, user_id, start_face }: any) {
         setData('bet', 0);
     };
 
-    const betFace = (e: any) => {
-        e.preventDefault();
+    const betFace = (event: { preventDefault: () => void; }) => {
+        event.preventDefault();
+        if (bet > user.points_curr_table){
+            setError('bet', "The Bet can not exceed your points inside the table.")
+            return
+        }
         setUser({
             ...user,
             curr_bet: bet,
@@ -88,7 +118,7 @@ function Coin({ list_players, user_id, start_face }: any) {
         setData('bet', 0);
     };
 
-    useEcho('coin', '.player-list-changed', (e) => {
+    useEcho('coin', '.player-list-changed', (e: {playerList: Player_vals[]}) => {
         setUser(
             e.playerList.filter(
                 (player: { id: number }) => player.id == user_id,
@@ -101,8 +131,7 @@ function Coin({ list_players, user_id, start_face }: any) {
         );
     });
 
-    useEcho('coin', '.coin-flipped', (e) => {
-        console.log(e)
+    useEcho('coin', '.coin-flipped', (e: coin_throw_vals) => {
         function Sleep(milliseconds: number) {
             return new Promise((resolve) => setTimeout(resolve, milliseconds));
         }
@@ -174,7 +203,7 @@ function Coin({ list_players, user_id, start_face }: any) {
                 <div className="mb-6 rounded-2xl border-2 border-black bg-gray-950">
                     <div
                         className="m-3 flex justify-around"
-                        hidden={user.curr_bet}
+                        hidden={user.curr_bet !== null}
                     >
                         <div className="grid min-h-20 min-w-20 rounded-xl border border-black bg-indigo-400/50 font-bold text-black hover:bg-indigo-500/50">
                             <div className="mx-auto self-center">

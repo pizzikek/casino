@@ -37,4 +37,17 @@ class PlayerListChanged implements ShouldBroadcast
     {
         return 'player-list-changed';
     }
+
+    public function broadcastWith(): array
+    {
+        return [
+            'playerList' => $this->playerList->values()->map(fn ($u) => [
+                'id' => $u->id,
+                'username' => $u->username,
+                'points_curr_table' => $u->points_curr_table,
+                'curr_bet' => $u->curr_bet,
+                'action_table' => $u->action_table,
+            ])->all(),
+        ];
+    }
 }
