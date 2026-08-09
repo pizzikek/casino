@@ -1,12 +1,12 @@
 import { useForm } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
 import React, { useState } from 'react';
-import squashed_face_flipped from '../../../../images/coin_Face-squashed-flipped.png';
-import squashed_face from '../../../../images/coin_Face-squashed.png';
-import coin_face from '../../../../images/coin_Face.png';
-import squashed_number_flipped from '../../../../images/coin_Number-squashed-flipped.png';
-import squashed_number from '../../../../images/coin_Number-squashed.png';
-import coin_number from '../../../../images/coin_Number.png';
+import squashed_face_flipped from '../../../../images/coin/coin_Face-squashed-flipped.png';
+import squashed_face from '../../../../images/coin/coin_Face-squashed.png';
+import coin_face from '../../../../images/coin/coin_Face.png';
+import squashed_number_flipped from '../../../../images/coin/coin_Number-squashed-flipped.png';
+import squashed_number from '../../../../images/coin/coin_Number-squashed.png';
+import coin_number from '../../../../images/coin/coin_Number.png';
 
 interface Player_vals{
     id: number,
