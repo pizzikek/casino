@@ -7,6 +7,8 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\SessionController;
 use App\Http\Middleware\inGame;
 use App\Http\Middleware\notInGame;
+use App\misc\DeckOfCards;
+use App\Models\CardDeck;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'welcome')->name('home');
@@ -30,3 +32,29 @@ Route::post('/games/coin/num', [GameController::class, 'bet_num'])->name('coin')
 Route::post('/games/coin/face', [GameController::class, 'bet_face'])->name('coin')->middleware('auth')->middleware(inGame::class);
 
 Route::post('/games/leave', [GameController::class, 'leave'])->name('leave')->middleware('auth');
+
+
+Route::get('/deck/new', function (){
+    $deck_of_cards = new CardDeck();
+    $deck_of_cards->deck = new DeckOfCards(2,false);
+    $deck_of_cards->save();
+
+    dd($deck_of_cards->deck);
+});
+Route::get('/deck/shuffle', function (){
+    $deck_of_cards = CardDeck::all()->firstOrFail();
+    $deck_of_cards->deck->shuffle();
+    $deck_of_cards->save();
+
+    dd($deck_of_cards->deck);
+});
+
+Route::get('/deck/draw', function (){
+    $deck_of_cards = CardDeck::all()->firstOrFail();
+    $drawncards = $deck_of_cards->deck->draw_card();
+    $deck_of_cards->save();
+
+    dd($drawncards);
+});
+
+
