@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class CoinTable extends Model
 {
-    public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function players(): MorphMany
     {
-        return $this->belongsToMany(User::class, 'user_coin_table_pivot');
+        return $this->morphMany(User::class, 'playable');
     }
 }

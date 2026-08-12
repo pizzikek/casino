@@ -39,10 +39,10 @@ class GameEntryPageController extends Controller
         $user->in_table = true;
         $user->save();
 
-        $table->users()->attach($user);
+        $table->players->save($user);
 
         // Redirect
-        event(new PlayerListChanged($request->user()->coinTables()->firstOrFail()->users()/*->where('users.id', '!=', $request->user()->id)*/->get()));
+        event(new PlayerListChanged($request->user()->playable->players));
 
         return redirect('/games/coin');
     }

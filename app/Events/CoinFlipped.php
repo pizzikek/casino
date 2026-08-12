@@ -6,6 +6,7 @@ use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -16,7 +17,7 @@ class CoinFlipped implements ShouldBroadcast
     /**
      * Create a new event instance.
      */
-    public function __construct(public $face, public $playerList, public $time)
+    public function __construct(public string $face, public Collection $playerList, public int $time)
     {
         //
     }

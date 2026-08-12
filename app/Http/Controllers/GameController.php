@@ -16,9 +16,9 @@ class GameController extends Controller
         //    $player = ['App\misc\misc', 'safe_items']($player);
         // }
         return inertia('games/table/coin', [
-            'list_players' => $request->user()->coinTables()->firstOrFail()->users()/* ->where('users.id', '!=', $request->user()->id) */ ->get(),
+            'list_players' => $request->user()->playable->players,
             'user_id' => $request->user()->id,
-            'start_face' => $request->user()->coinTables()->firstOrFail()['coin_side']]);
+            'start_face' => $request->user()->playable['coin_side']]);
     }
 
     public function bet_num(Request $request)
@@ -35,20 +35,22 @@ class GameController extends Controller
     {
         $user = $request->user();
         // Find current Table
-        $table = $user->coinTables()->firstOrFail();
+        $table = $user->playable;
         // add points from table back
         $user->points += $user->points_curr_table;
         $user->action_table = null;
         $user->curr_bet = null;
         $user->points_curr_table = null;
         $user->in_table = false;
-        $user->save();
         // delete record from table
-        $table->users()->detach($user);
+        $user->playable()->disassociate();
+        $user->playable_id = null;
+        $user->playable_type = null;
+        $user->save();
 
-        $users = $table->users()/* ->where('users.id', '!=', $request->user()->id) */ ->get();
+
+        $users = $table->players;
         event(new PlayerListChanged($users));
-
         if (array_all($users->toArray(), function (mixed $value): bool {
             return $value['action_table'] != null;
         })) {
@@ -78,23 +80,23 @@ class GameController extends Controller
         // return
         $user->save();
 
-        $users = $request->user()->coinTables()->firstOrFail()->users()/* ->where('users.id', '!=', $request->user()->id) */ ->get();
+        $users = $request->user()->playable->players;
 
         if (array_all($users->toArray(), function (mixed $value): bool {
             return $value['action_table'] != null;
         })) {
-            $this->flip_coin($request->user()->coinTables()->firstOrFail());
+            $this->flip_coin($request->user()->playable);
         } else {
             event(new PlayerListChanged($users));
         }
     }
 
-    private function flip_coin($table)
+    private function flip_coin(mixed $table)
     {
         $face = Arr::random(['num', 'face']);
 
         $table->coin_side = $face;
-        foreach ($table->users as $user) {
+        foreach ($table->players as $user) {
             if ($user->action_table == $face) {
                 $user->points_curr_table += $user->curr_bet * 2;
                 $table->bank_money -= $user->curr_bet;
@@ -109,7 +111,7 @@ class GameController extends Controller
 
         $time = mt_rand(3, 7);
 
-        event(new CoinFlipped($face, $table->users, $time));
+        event(new CoinFlipped($face, $table->players, $time));
 
     }
 }
