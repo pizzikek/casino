@@ -1,12 +1,7 @@
+import Card from '@/components/card';
 import { useForm } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
 import React, { useState } from 'react';
-import squashed_face_flipped from '../../../../images/coin/coin_Face-squashed-flipped.png';
-import squashed_face from '../../../../images/coin/coin_Face-squashed.png';
-import coin_face from '../../../../images/coin/coin_Face.png';
-import squashed_number_flipped from '../../../../images/coin/coin_Number-squashed-flipped.png';
-import squashed_number from '../../../../images/coin/coin_Number-squashed.png';
-import coin_number from '../../../../images/coin/coin_Number.png';
 
 interface Player_vals{
     id: number,
@@ -19,18 +14,7 @@ interface Player_vals{
 interface BE_vals{
     list_players: Player_vals[],
     user_id: number,
-    start_face: string,
     table_id: string
-}
-interface bet_vals{
-    playersList: Player_vals[],
-    preventDefault: Function
-}
-interface coin_throw_vals{
-    face: string,
-    playerList: Player_vals[],
-    time: number
-
 }
 
 function LeaveBTN() {
@@ -56,7 +40,7 @@ function LeaveBTN() {
         </form>
     );
 }
-function Coin({ list_players, user_id, start_face, table_id }: BE_vals) {
+function Baccarat({ list_players, user_id, table_id }: BE_vals) {
     const [user, setUser] = useState(
         list_players.filter(
             (player: { id: number }) => player.id == user_id,
@@ -67,17 +51,7 @@ function Coin({ list_players, user_id, start_face, table_id }: BE_vals) {
         list_players.filter((player: { id: number }) => player.id !== user_id),
     );
 
-    switch (start_face) {
-        case 'face':
-            start_face = coin_face;
-            break;
 
-        case 'num':
-            start_face = coin_number;
-            break;
-    }
-
-    const [img, setImg] = useState(start_face);
 
     const {
         data: { bet },
@@ -90,7 +64,7 @@ function Coin({ list_players, user_id, start_face, table_id }: BE_vals) {
         bet: 0,
     });
 
-    const betNumber = (event: { preventDefault: () => void; }) => {
+    const betPlayer = (event: { preventDefault: () => void; }) => {
         event.preventDefault();
         if (bet > user.points_curr_table){
             setError('bet', "The Bet can not exceed your points inside the table.")
@@ -101,13 +75,13 @@ function Coin({ list_players, user_id, start_face, table_id }: BE_vals) {
             ...user,
             curr_bet: bet,
             points_curr_table: user.points_curr_table - bet,
-            action_table: 'num'
+            action_table: 'player'
         });
-        post('/games/coin/num');
+        post(route);
         setData('bet', 0);
     };
 
-    const betFace = (event: { preventDefault: () => void; }) => {
+    const betBanker = (event: { preventDefault: () => void; }) => {
         event.preventDefault();
         if (bet > user.points_curr_table){
             setError('bet', "The Bet can not exceed your points inside the table.")
@@ -117,13 +91,28 @@ function Coin({ list_players, user_id, start_face, table_id }: BE_vals) {
             ...user,
             curr_bet: bet,
             points_curr_table: user.points_curr_table - bet,
-            action_table: 'face'
+            action_table: 'banker'
         });
-        post('/games/coin/face');
+        post(route);
+        setData('bet', 0);
+    };
+    const betTie = (event: { preventDefault: () => void; }) => {
+        event.preventDefault();
+        if (bet > user.points_curr_table){
+            setError('bet', "The Bet can not exceed your points inside the table.")
+            return
+        }
+        setUser({
+            ...user,
+            curr_bet: bet,
+            points_curr_table: user.points_curr_table - bet,
+            action_table: 'tie'
+        });
+        post(route);
         setData('bet', 0);
     };
 
-    useEcho('coin', '.player-list-changed' + table_id, (e: {playerList: Player_vals[]}) => {
+    useEcho('baccarat', '.player-list-changed' + table_id, (e: {playerList: Player_vals[]}) => {
         setUser(
             e.playerList.filter(
                 (player: { id: number }) => player.id == user_id,
@@ -136,52 +125,11 @@ function Coin({ list_players, user_id, start_face, table_id }: BE_vals) {
         );
     });
 
-    useEcho('coin', '.coin-flipped', (e: coin_throw_vals) => {
-        function Sleep(milliseconds: number) {
-            return new Promise((resolve) => setTimeout(resolve, milliseconds));
-        }
-        async function flip() {
-            for (let i = 0; i < e.time; i++) {
-                setImg(coin_face);
-                await Sleep(100);
-                setImg(squashed_face);
-                await Sleep(100);
-                setImg(squashed_number_flipped);
-                await Sleep(100);
-                setImg(coin_number);
-                await Sleep(100);
-                setImg(squashed_number);
-                await Sleep(100);
-                setImg(squashed_face_flipped);
-                await Sleep(100);
-            }
-
-            if (e.face == 'face') {
-                setImg(coin_face);
-            }
-
-            if (e.face == 'num') {
-                setImg(coin_number);
-            }
-        }
-        flip().then(() => {
-            setUser(
-                e.playerList.filter(
-                    (player: { id: number }) => player.id == user_id,
-                )[0],
-            );
-            setPlayers(
-                e.playerList.filter(
-                    (player: { id: number }) => player.id !== user_id,
-                ),
-            );
-        });
-    });
 
     return (
         <div className="grid h-screen w-screen text-white/60">
             <div className="absolute flex self-center justify-self-center">
-                <img src={img} alt="" className="max-h-120" />
+                <Card code='6-H'/>
             </div>
 
             <div className="absolute mb-40 flex w-2/5 justify-around gap-2 self-end justify-self-start">
@@ -206,23 +154,48 @@ function Coin({ list_players, user_id, start_face, table_id }: BE_vals) {
 
                 <div className="mb-6 rounded-2xl border-2 border-black bg-gray-950">
                     <div
-                        className="m-3 flex justify-around"
+                        className="m-3 flex flex-col gap-0.5"
                         hidden={user.curr_bet !== null}
                     >
-                        <div className="grid min-h-20 min-w-20 rounded-xl border border-black bg-indigo-400/50 font-bold text-black hover:bg-indigo-500/50">
+                        <div className="grid rounded-md min-w-15  mx-auto mb-1 border border-black bg-indigo-500/30 hover:bg-indigo-600/30 font-bold text-white/50">
                             <div className="mx-auto self-center">
                                 <button
-                                    onClick={betNumber}
+                                    onClick={betTie}
                                     disabled={processing}
                                 >
-                                    Number
+                                    Tie
                                 </button>
                             </div>
                         </div>
 
-                        <div className="mx-1 grid">
+
+                        <div className="grid min-h-15 min-w-30 rounded-xl border border-black bg-indigo-400/50 font-bold text-black hover:bg-indigo-500/50">
+                            <div className="mx-auto self-center">
+                                <button
+                                    onClick={betPlayer}
+                                    disabled={processing}
+                                >
+                                    Player
+                                </button>
+                            </div>
+                        </div>
+
+
+                        <div className="grid min-h-15 min-w-30 rounded-xl border border-black bg-indigo-400/50 font-bold text-black hover:bg-indigo-500/50">
+                            <div className="mx-auto self-center">
+                                <button
+                                    onClick={betBanker}
+                                    disabled={processing}
+                                >
+                                    Banker
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="mx-1 mt-1 grid">
                             <div className="self-center rounded-md border border-black bg-gray-900">
                                 <input
+                                    className='max-w-40'
                                     type="number"
                                     placeholder="Bet:"
                                     value={bet}
@@ -237,14 +210,6 @@ function Coin({ list_players, user_id, start_face, table_id }: BE_vals) {
                                         </div>
                                     )}
                                 </div>
-                            </div>
-                        </div>
-
-                        <div className="grid min-h-20 min-w-20 rounded-xl border border-black bg-indigo-400/50 font-bold text-black hover:bg-indigo-500/50">
-                            <div className="mx-auto self-center">
-                                <button onClick={betFace} disabled={processing}>
-                                    Face
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -268,4 +233,4 @@ function Coin({ list_players, user_id, start_face, table_id }: BE_vals) {
         </div>
     );
 }
-export default Coin;
+export default Baccarat;

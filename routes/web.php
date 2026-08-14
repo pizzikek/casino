@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BaccaratEntryPageController;
+use App\Http\Controllers\BaccaratGameController;
 use App\Http\Controllers\CreateUserController;
 use App\Http\Controllers\CoinGameController;
 use App\Http\Controllers\CoinEntryPageController;
@@ -23,17 +24,25 @@ Route::get('/logout', [SessionController::class, 'destroy'])->name('logout')->mi
 Route::get('/register', [CreateUserController::class, 'index'])->name('register')->middleware('guest');
 Route::post('/register', [CreateUserController::class, 'store'])->name('register')->middleware('guest');
 
+
 // Pages
 Route::get('/home', [PageController::class, 'index'])->name('home')->middleware('auth')->middleware(notInGame::class);
-
 Route::get('/coin', [CoinEntryPageController::class, 'show'])->name('coin')->middleware('auth')->middleware(notInGame::class);
+Route::get('/baccarat', [BaccaratEntryPageController::class, 'show'])->name('baccarat')->middleware('auth')->middleware(notInGame::class);
+
+
+// Games
+    // Coin Flip
 Route::post('/coin', [CoinEntryPageController::class, 'store'])->name('coin')->middleware('auth')->middleware(notInGame::class);
 Route::get('/games/coin', [CoinGameController::class, 'coin'])->name('coin')->middleware('auth')->middleware(inGame::class);
+        // Actions
 Route::post('/games/coin/num', [CoinGameController::class, 'bet_num'])->name('coin')->middleware('auth')->middleware(inGame::class);
 Route::post('/games/coin/face', [CoinGameController::class, 'bet_face'])->name('coin')->middleware('auth')->middleware(inGame::class);
 
-Route::get('/baccarat', [BaccaratEntryPageController::class, 'show'])->name('baccarat')->middleware('auth')->middleware(notInGame::class);
+    // Baccarat
 Route::post('/baccarat', [BaccaratEntryPageController::class, 'store'])->name('baccarat')->middleware('auth')->middleware(notInGame::class);
+Route::get('/games/baccarat', [BaccaratGameController::class, 'show'])->name('baccarat')->middleware('auth')->middleware(inGame::class);
+
 
 Route::post('/games/leave', [CoinGameController::class, 'leave'])->name('leave')->middleware('auth');
 

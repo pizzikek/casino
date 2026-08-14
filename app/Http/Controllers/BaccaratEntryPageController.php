@@ -54,6 +54,6 @@ class BaccaratEntryPageController extends Controller
         // Redirect
         event(new PlayerListChanged($request->user()->playable->players, $table->id, 'baccarat'));
 
-        return redirect('/games/coin');
+        return redirect('/games/baccarat');
     }
 }

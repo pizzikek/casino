@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('baccarat_tables', function (Blueprint $table) {
             $table->id();
-            $table->integer("bank_money");
-            $table->json("cards");
+            $table->integer("bank_money")->default(0);
+            $table->json("cards")->nullable();
             $table->string('status')->default('pending');
             $table->timestamps();
         });
