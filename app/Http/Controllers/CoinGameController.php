@@ -7,7 +7,7 @@ use App\Events\PlayerListChanged;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 
-class GameController extends Controller
+class CoinGameController extends Controller
 {
     public function coin(Request $request)
     {
@@ -18,7 +18,8 @@ class GameController extends Controller
         return inertia('games/table/coin', [
             'list_players' => $request->user()->playable->players,
             'user_id' => $request->user()->id,
-            'start_face' => $request->user()->playable['coin_side']]);
+            'start_face' => $request->user()->playable['coin_side'],
+            'table_id' => $request->user()->playable->id]);
     }
 
     public function bet_num(Request $request)
@@ -47,10 +48,13 @@ class GameController extends Controller
         $user->playable_id = null;
         $user->playable_type = null;
         $user->save();
-
-
+        
+        if ($table->players->count() < 1){
+            $table->delete();
+            return redirect('/coin');
+        }
         $users = $table->players;
-        event(new PlayerListChanged($users));
+        event(new PlayerListChanged($users, $table->id, 'coin'));
         if (array_all($users->toArray(), function (mixed $value): bool {
             return $value['action_table'] != null;
         })) {
@@ -87,7 +91,7 @@ class GameController extends Controller
         })) {
             $this->flip_coin($request->user()->playable);
         } else {
-            event(new PlayerListChanged($users));
+            event(new PlayerListChanged($users, $user->playable->id, 'coin'));
         }
     }
 

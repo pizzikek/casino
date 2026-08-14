@@ -32,7 +32,8 @@ export default function Layout({ children, userProp, header}: LayoutProps) {
 
     const navigation = [
         { name: 'Home', href: '/home', current: url == '/home' },
-        { name: 'Coin Flip', href: '/coin', current: url == '/coin'}
+        { name: 'Coin Flip', href: '/coin', current: url == '/coin'},
+        { name: 'Baccarat', href: '/baccarat', current: url == '/baccarat'}
     ];
 
     const user = {

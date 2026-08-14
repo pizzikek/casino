@@ -7,14 +7,14 @@ use App\Models\CoinTable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
-class GameEntryPageController extends Controller
+class CoinEntryPageController extends Controller
 {
-    public function coin_show(Request $request)
+    public function show(Request $request)
     {
         return inertia('games/coin', ['user' => $request->user()]);
     }
 
-    public function coin_store(Request $request)
+    public function store(Request $request)
     {
 
         // Validate
@@ -26,12 +26,25 @@ class GameEntryPageController extends Controller
         $user = $request->user();
 
         // find table
-        try {
-            $table = CoinTable::firstOrFail();
-        } catch (ModelNotFoundException $exception) {
+        $tables = CoinTable::all();
+        if ($tables->count() < 1){
             CoinTable::create();
-            $table = CoinTable::firstOrFail();
+            $tables = CoinTable::all();
         }
+        
+        
+        $lowest = $tables[0];
+
+        foreach ($tables as $table){
+            if ($table->players->count() < $lowest->players->count() && $table->players->count() < 5){
+                $lowest = $table;
+            }
+        }
+        if ($lowest->players->count() >= 5){
+            $lowest = CoinTable::create();
+        }
+
+        $table = $lowest;
 
         // set up
         $user->points -= $attributes['points'];
@@ -39,10 +52,10 @@ class GameEntryPageController extends Controller
         $user->in_table = true;
         $user->save();
 
-        $table->players->save($user);
+        $table->players()->save($user);
 
         // Redirect
-        event(new PlayerListChanged($request->user()->playable->players));
+        event(new PlayerListChanged($request->user()->playable->players, $table->id, 'coin'));
 
         return redirect('/games/coin');
     }

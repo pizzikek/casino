@@ -2,6 +2,7 @@ import { Head, useForm } from '@inertiajs/react';
 import Button from '@/components/forms/button';
 import InputLabel from '@/components/forms/input-label';
 import Layout from '@/components/layout';
+import Spadesace from '../../../../resources/images/cards/ACE-S.png'
 
 function Coin(user:any) {
 
@@ -10,13 +11,13 @@ function Coin(user:any) {
     });
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/coin');
+        post('/baccarat');
     };
 
     return (
         <>
             <Head title="Home" />
-            <Layout userProp={user.user} header="enter a Coin Flip table">
+            <Layout userProp={user.user} header="enter a Baccarat table">
                 <div className="text-white/60">
                     <form onSubmit={handleSubmit}>
                         <InputLabel
@@ -41,7 +42,7 @@ function Coin(user:any) {
 
 
                         <div className="mt-12">
-                            <Button label="Enter Coin Table" disabled={processing} />
+                            <Button label="Enter Baccarat Table" disabled={processing} />
                         </div>
                     </form>
                 </div>

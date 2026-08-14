@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('card_decks', function (Blueprint $table) {
             $table->id();
             $table->json("deck");
+            $table->morphs('deckable');
             $table->timestamps();
         });
     }

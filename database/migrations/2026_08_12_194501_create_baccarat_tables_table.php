@@ -1,7 +1,5 @@
 <?php
 
-use App\Models\CoinTable;
-use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_coin_table_pivot', function (Blueprint $table) {
+        Schema::create('baccarat_tables', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(CoinTable::class);
-            $table->foreignIdFor(User::class);
+            $table->integer("bank_money");
+            $table->json("cards");
+            $table->string('status')->default('pending');
+            $table->timestamps();
         });
     }
 
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_coin_table_pivot');
+        Schema::dropIfExists('baccarat_tables');
     }
 };

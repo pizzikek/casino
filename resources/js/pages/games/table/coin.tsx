@@ -19,7 +19,8 @@ interface Player_vals{
 interface BE_vals{
     list_players: Player_vals[],
     user_id: number,
-    start_face: string
+    start_face: string,
+    table_id: string
 }
 interface bet_vals{
     playersList: Player_vals[],
@@ -55,7 +56,7 @@ function LeaveBTN() {
         </form>
     );
 }
-function Coin({ list_players, user_id, start_face }: BE_vals) {
+function Coin({ list_players, user_id, start_face, table_id }: BE_vals) {
     const [user, setUser] = useState(
         list_players.filter(
             (player: { id: number }) => player.id == user_id,
@@ -118,7 +119,7 @@ function Coin({ list_players, user_id, start_face }: BE_vals) {
         setData('bet', 0);
     };
 
-    useEcho('coin', '.player-list-changed', (e: {playerList: Player_vals[]}) => {
+    useEcho('coin', '.player-list-changed' + table_id, (e: {playerList: Player_vals[]}) => {
         setUser(
             e.playerList.filter(
                 (player: { id: number }) => player.id == user_id,

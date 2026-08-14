@@ -16,9 +16,12 @@ class PlayerListChanged implements ShouldBroadcast
     /**
      * Create a new event instance.
      */
-    public function __construct(public $playerList)
+    private int $id;
+    private string $channel;
+    public function __construct(public mixed $playerList, private int $id_p, private string $channel_p)
     {
-        //
+        $this->id = $id_p;
+        $this->channel = $channel_p;
     }
 
     /**
@@ -29,13 +32,13 @@ class PlayerListChanged implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('coin'),
+            new PrivateChannel($this->channel),
         ];
     }
 
     public function broadcastAs(): string
     {
-        return 'player-list-changed';
+        return 'player-list-changed'. $this->id;
     }
 
     public function broadcastWith(): array
