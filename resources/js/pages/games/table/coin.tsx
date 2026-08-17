@@ -37,7 +37,7 @@ function LeaveBTN() {
     const { processing, post, errors } = useForm();
     const leave = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/games/leave');
+        post('/coin/leave');
 
         if (errors) {
             console.log(errors);

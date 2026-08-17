@@ -17,7 +17,15 @@ class notInGame
     public function handle(Request $request, Closure $next): Response
     {
         if ($request->user()->in_table) {
-            return redirect('/leave');
+            $gamekeys = [
+                'App\Models\CoinTable' => \App\Http\Controllers\CoinGameController::class,
+                'App\Models\BaccaratTable' => \App\Http\Controllers\BaccaratGameController::class,
+            ];
+            $playableType = $request->user()->playable_type;
+
+            $controllerClass = $gamekeys[$playableType];
+            
+            return app($controllerClass)->leave($request);
         }
 
         return $next($request);
