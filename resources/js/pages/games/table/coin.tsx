@@ -101,7 +101,7 @@ function Coin({ list_players, user_id, start_face, table_id }: BE_vals) {
             ...user,
             curr_bet: bet,
             points_curr_table: user.points_curr_table - bet,
-            action_table: 'num'
+            action_table: 'tails'
         });
         post('/games/coin/num');
         setData('bet', 0);
@@ -117,7 +117,7 @@ function Coin({ list_players, user_id, start_face, table_id }: BE_vals) {
             ...user,
             curr_bet: bet,
             points_curr_table: user.points_curr_table - bet,
-            action_table: 'face'
+            action_table: 'heads'
         });
         post('/games/coin/face');
         setData('bet', 0);
@@ -215,7 +215,7 @@ function Coin({ list_players, user_id, start_face, table_id }: BE_vals) {
                                     onClick={betNumber}
                                     disabled={processing}
                                 >
-                                    Number
+                                    Heads
                                 </button>
                             </div>
                         </div>
@@ -243,7 +243,7 @@ function Coin({ list_players, user_id, start_face, table_id }: BE_vals) {
                         <div className="grid min-h-20 min-w-20 rounded-xl border border-black bg-indigo-400/50 font-bold text-black hover:bg-indigo-500/50">
                             <div className="mx-auto self-center">
                                 <button onClick={betFace} disabled={processing}>
-                                    Face
+                                    Tails
                                 </button>
                             </div>
                         </div>

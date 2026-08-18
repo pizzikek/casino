@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Events\PlayerListChanged;
+use App\misc\DeckOfCards;
 use App\Models\BaccaratTable;
+use App\Models\CardDeck;
 use Illuminate\Http\Request;
 
 class BaccaratEntryPageController extends Controller
@@ -25,7 +27,10 @@ class BaccaratEntryPageController extends Controller
         // find table
         $tables = BaccaratTable::all();
         if ($tables->count() < 1){
-            BaccaratTable::create();
+            $lowest = BaccaratTable::create();
+            $deck_of_cards = new CardDeck();
+            $deck_of_cards->deck = new DeckOfCards(2, true);
+            $lowest->deck()->save($deck_of_cards);
             $tables = BaccaratTable::all();
         }
         
@@ -39,9 +44,14 @@ class BaccaratEntryPageController extends Controller
         }
         if ($lowest->players->count() >= 5){
             $lowest = BaccaratTable::create();
+            $deck_of_cards = new CardDeck();
+            $deck_of_cards->deck = new DeckOfCards(2, true);
+            $lowest->deck()->save($deck_of_cards);
         }
 
         $table = $lowest;
+
+        
 
         // set up
         $user->points -= $attributes['points'];

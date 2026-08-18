@@ -11,6 +11,7 @@ use App\Http\Middleware\inCorrectGame;
 use App\Http\Middleware\inGame;
 use App\Http\Middleware\notInGame;
 use App\misc\DeckOfCards;
+use App\Models\BaccaratTable;
 use App\Models\CardDeck;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -44,7 +45,8 @@ Route::post('/games/coin/face', [CoinGameController::class, 'bet_face'])->name('
 // Baccarat
 Route::post('/baccarat', [BaccaratEntryPageController::class, 'store'])->name('baccarat')->middleware('auth')->middleware(notInGame::class);
 Route::get('/games/baccarat', [BaccaratGameController::class, 'show'])->name('baccarat')->middleware('auth')->middleware(inGame::class)->middleware(inCorrectGame::class . ':App\Models\BaccaratTable');
-
+// Actions
+Route::post('/games/baccarat/bet', [BaccaratGameController::class, 'bet'])->name('baccarat')->middleware('auth')->middleware(inGame::class)->middleware(inCorrectGame::class . ':App\Models\BaccaratTable');
 
 Route::post('/coin/leave', [CoinGameController::class, 'leave'])->name('leave')->middleware('auth');
 Route::post('/baccarat/leave', [BaccaratGameController::class, 'leave'])->name('leave')->middleware('auth');

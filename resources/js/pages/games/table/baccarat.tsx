@@ -54,7 +54,7 @@ function Baccarat({ list_players, user_id, table_id }: BE_vals) {
 
 
     const {
-        data: { bet },
+        data: { bet, bet_on },
         setData,
         processing,
         post,
@@ -62,26 +62,10 @@ function Baccarat({ list_players, user_id, table_id }: BE_vals) {
         setError
     } = useForm({
         bet: 0,
+        bet_on: '',
     });
 
-    const betPlayer = (event: { preventDefault: () => void; }) => {
-        event.preventDefault();
-        if (bet > user.points_curr_table){
-            setError('bet', "The Bet can not exceed your points inside the table.")
-            return
-        }
-
-        setUser({
-            ...user,
-            curr_bet: bet,
-            points_curr_table: user.points_curr_table - bet,
-            action_table: 'player'
-        });
-        post(route);
-        setData('bet', 0);
-    };
-
-    const betBanker = (event: { preventDefault: () => void; }) => {
+    const do_bet = (event: { preventDefault: () => void; }, bet_on: string) => {
         event.preventDefault();
         if (bet > user.points_curr_table){
             setError('bet', "The Bet can not exceed your points inside the table.")
@@ -91,28 +75,14 @@ function Baccarat({ list_players, user_id, table_id }: BE_vals) {
             ...user,
             curr_bet: bet,
             points_curr_table: user.points_curr_table - bet,
-            action_table: 'banker'
+            action_table: bet_on
         });
-        post(route);
+        setData('bet_on', bet_on)
+        post('/games/baccarat/bet');
         setData('bet', 0);
-    };
-    const betTie = (event: { preventDefault: () => void; }) => {
-        event.preventDefault();
-        if (bet > user.points_curr_table){
-            setError('bet', "The Bet can not exceed your points inside the table.")
-            return
-        }
-        setUser({
-            ...user,
-            curr_bet: bet,
-            points_curr_table: user.points_curr_table - bet,
-            action_table: 'tie'
-        });
-        post(route);
-        setData('bet', 0);
-    };
+    }
 
-    useEcho('baccarat', '.player-list-changed' + table_id, (e: {playerList: Player_vals[]}) => {
+    useEcho('baccarat', '.player-list-changed' + table_id, (e: {playerList: Player_vals[], data : object|null}) => {
         setUser(
             e.playerList.filter(
                 (player: { id: number }) => player.id == user_id,
@@ -123,13 +93,27 @@ function Baccarat({ list_players, user_id, table_id }: BE_vals) {
                 (player: { id: number }) => player.id !== user_id,
             ),
         );
+        console.log(e)
     });
 
 
     return (
         <div className="grid h-screen w-screen text-white/60">
-            <div className="absolute flex self-center justify-self-center">
-                <Card code='6-H'/>
+            <div className="absolute flex self-center justify-self-center gap-8">
+                <div className='flex flex-col'>
+                    <div className='mx-auto text-black font-bold text-2xl'>Player: 0</div>
+                    <div className='gap-2 flex flex-row'>
+                        <Card code='card'/>
+                        <Card code='card'/>
+                    </div>
+                </div>
+                <div className='flex flex-col'>
+                    <div className='mx-auto text-black font-bold text-2xl'>Banker: 0</div>
+                    <div className='gap-2 flex flex-row'>
+                        <Card code='card'/>
+                        <Card code='card'/>
+                    </div>
+                </div>
             </div>
 
             <div className="absolute mb-40 flex w-2/5 justify-around gap-2 self-end justify-self-start">
@@ -160,7 +144,7 @@ function Baccarat({ list_players, user_id, table_id }: BE_vals) {
                         <div className="grid rounded-md min-w-15  mx-auto mb-1 border border-black bg-indigo-500/30 hover:bg-indigo-600/30 font-bold text-white/50">
                             <div className="mx-auto self-center">
                                 <button
-                                    onClick={betTie}
+                                    onClick={(e)=>do_bet(e, 'tie')}
                                     disabled={processing}
                                 >
                                     Tie
@@ -172,7 +156,7 @@ function Baccarat({ list_players, user_id, table_id }: BE_vals) {
                         <div className="grid min-h-15 min-w-30 rounded-xl border border-black bg-indigo-400/50 font-bold text-black hover:bg-indigo-500/50">
                             <div className="mx-auto self-center">
                                 <button
-                                    onClick={betPlayer}
+                                    onClick={(e)=>do_bet(e, 'player')}
                                     disabled={processing}
                                 >
                                     Player
@@ -184,7 +168,7 @@ function Baccarat({ list_players, user_id, table_id }: BE_vals) {
                         <div className="grid min-h-15 min-w-30 rounded-xl border border-black bg-indigo-400/50 font-bold text-black hover:bg-indigo-500/50">
                             <div className="mx-auto self-center">
                                 <button
-                                    onClick={betBanker}
+                                    onClick={(e)=>do_bet(e, 'banker')}
                                     disabled={processing}
                                 >
                                     Banker

@@ -18,10 +18,10 @@ class PlayerListChanged implements ShouldBroadcast
      */
     private int $id;
     private string $channel;
-    public function __construct(public mixed $playerList, private int $id_p, private string $channel_p)
+    public function __construct(public mixed $playerList, private int $id_param, private string $channel_param, public mixed $data = null)
     {
-        $this->id = $id_p;
-        $this->channel = $channel_p;
+        $this->id = $id_param;
+        $this->channel = $channel_param;
     }
 
     /**
@@ -51,6 +51,8 @@ class PlayerListChanged implements ShouldBroadcast
                 'curr_bet' => $u->curr_bet,
                 'action_table' => $u->action_table,
             ])->all(),
+            'data' => $this->data,
+
         ];
     }
 }

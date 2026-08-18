@@ -6,5 +6,8 @@ export default function Card( {code}: any ) {
     const imagePath = `../../images/cards/${code}.png`;
     const src = cards[imagePath];
 
-    return <img src={src} alt={`${code}`} width="100" height="140" />;
+    return (
+        <div className="max-w-50">
+            <img src={src} alt={`${code}`} className="w-full" />
+        </div>);
 }
